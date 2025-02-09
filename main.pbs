@@ -1,0 +1,52 @@
+#!/bin/bash
+# Job name
+#PBS -N matrix.pbs
+# Output files
+#PBS -o ./matrix_parallel.txt
+#PBS -e ./matrix_parallel.e
+# Queue name
+#PBS -q short_cpuQ
+# Set the maximum wall time
+#PBS -l walltime=0:60:00
+# Number of nodes, cpus, mpi processors and amount of memory
+#PBS -l select=1:ncpus=32:ompthreads=64:mem=512mb
+# Modules for Cpp
+module load gcc91
+g++() {
+    g++-9.1.0 "$@"
+}
+g++ --version
+
+# Select the working directory
+cd /home/francesco.nodari/CODES
+
+#compile before running
+g++ -o OMP_no_flag.out OMP_no_flag.cpp -fopenmp
+g++ -o OMP_o1.out OMP_O1.cpp -fopenmp -O1
+g++ -o OMP_o2.out OMP_O2.cpp -fopenmp -O2
+g++ -o OMP_o3.out OMP_O3.cpp -fopenmp -O3
+g++ -o OMP_ofast.out OMP_Ofast.cpp -fopenmp -Ofast
+
+g++ -o implicit.out implicit.cpp
+g++ -o Serial.out Serial.cpp
+
+#run the project
+echo "Start of simulations....."
+ for ((i = 4 ; i < 13 ; i++ )); do
+  echo "Exponent size= $i "
+ echo "Serial Code "
+ ./Serial.out $i
+ echo "Implicit parallelism"
+./implicit.out $i
+echo "OMP_no_flag"
+./OMP_no_flag.out $i
+echo "OMP_O1"
+./OMP_o1.out $i
+echo "OMP_O2"
+./OMP_o2.out $i
+echo "OMP_O3"
+./OMP_o3.out $i
+echo "OMP_OFAST"
+./OMP_ofast.out $i
+done
+echo "All simulations are done"
