@@ -14,7 +14,7 @@ on:
       src_type:
         description: 'Project Type (java, python, dotnet, c++) see https://cyclonedx.github.io/cdxgen/#/PROJECT_TYPES'
         required: false
-        default: 'java'
+        default: 'c++'
 
 jobs:
   build:
